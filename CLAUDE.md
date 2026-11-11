@@ -54,7 +54,7 @@ The repo is a monorepo with two independently built apps plus a Python tool:
 
 ### CI
 
-`.github/workflows/main.yml` runs on PRs/pushes to `main`: frontend `npm ci` → `npm run build` → tests with
+`.github/workflows/main.yml` runs on PRs/pushes to `main` and `develop`: frontend `npm ci` → `npm run build` → tests with
 coverage → lint, then backend `./mvnw clean verify -Pcoverage`, uploading both coverage reports as artifacts. Keep
 changes green against this pipeline before merging.
 
