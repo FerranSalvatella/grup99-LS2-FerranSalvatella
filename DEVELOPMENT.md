@@ -27,7 +27,7 @@ docker compose run --rm videograbber   # once: fills store/ with sample videos
 **A. Run only the backend in Docker** (you keep editing in your IDE):
 
 ```bash
-docker compose up backend         # http://localhost:8080 (dev profile, H2); first run downloads dependencies
+docker compose up backend         # http://localhost:8080 (dev profile, PostgreSQL from `db`); first run downloads dependencies
 docker compose restart backend    # after changing Java code
 ```
 
@@ -74,9 +74,10 @@ python3 main.py --store=/absolute/path/to/videos --id=10 --videos=../../resource
 | `ENV_PROTUBE_STORE_DIR`            | always                  | Absolute path of the video store folder. **End it with a path separator** (`/` or `\`) — it is used as a `file:` prefix to serve `/media/**`. |
 | `ENV_PROTUBE_GOOGLE_CLIENT_ID`     | Google OAuth login      | Google OAuth client id                                                                           |
 | `ENV_PROTUBE_GOOGLE_CLIENT_SECRET` | Google OAuth login      | Google OAuth client secret                                                                       |
-| `ENV_PROTUBE_DB_USER`              | `prod` profile          | Database user (use `sa` with the default H2 datasource)                                          |
-| `ENV_PROTUBE_DB_PWD`               | `prod` profile          | Database password (empty with the default H2 datasource)                                         |
-| `ENV_PROTUBE_DB`                   | `prod` + PostgreSQL     | PostgreSQL database name (see [Using PostgreSQL](#using-postgresql))                              |
+| `ENV_PROTUBE_DB_HOST`              | `dev` (optional), `prod`| PostgreSQL host. `dev` default: `localhost`                                                      |
+| `ENV_PROTUBE_DB`                   | `dev` (optional), `prod`| PostgreSQL database name. `dev` default: `protube`                                               |
+| `ENV_PROTUBE_DB_USER`              | `dev` (optional), `prod`| Database user. `dev` default: `protube`                                                          |
+| `ENV_PROTUBE_DB_PASS`              | `dev` (optional), `prod`| Database password. `dev` default: `protube`                                                      |
 
 Never commit real secrets. Set them in your shell, your OS, or your (local, uncommitted) IDE run configuration.
 
@@ -106,8 +107,8 @@ mvn spring-boot:run
 ```
 
 * Starts on **http://localhost:8080** with the `dev` profile (active by default through the Maven `dev` profile).
-* `dev` uses an in-memory H2 database and loads initial data (`pro_tube.load_initial_data=true`). All data is lost
-  on restart.
+* `dev` uses PostgreSQL and loads initial data (`pro_tube.load_initial_data=true`). Start the database first with
+  `docker compose up db`. Data is kept between restarts. See [Using PostgreSQL](#using-postgresql).
 * From IntelliJ you can instead use the shared **ProtubeBackApplication** run configuration (`.run/`) — edit its
   environment variables to point to your own store folder.
 * CORS is open for `/api/**` and `/auth/**`, so the Vite dev server can call the API directly.
@@ -195,20 +196,23 @@ java -jar target/protube-back-0.0.1-SNAPSHOT.jar
 ```
 
 (IntelliJ: the **Create jar** run configuration runs `package` with the `prod` profile.) Remember that
-`ENV_PROTUBE_STORE_DIR`, `ENV_PROTUBE_DB_USER` and `ENV_PROTUBE_DB_PWD` must be set in the environment where the jar
+`ENV_PROTUBE_STORE_DIR`, `ENV_PROTUBE_DB_HOST`, `ENV_PROTUBE_DB`, `ENV_PROTUBE_DB_USER` and `ENV_PROTUBE_DB_PASS` must be set in the environment where the jar
 runs.
 
 To only preview the production frontend bundle, without the backend: `cd frontend && npm run build:prod && npm run preview`.
 
 ### Using PostgreSQL
 
-The `prod` profile still points to an in-memory H2 database, which is only a placeholder — the MVP requires a real
-database (NFR-01 in [REQUIREMENT.md](./REQUIREMENT.md)). The PostgreSQL driver is already a dependency. To switch:
+Both `dev` and `prod` use PostgreSQL (NFR-01 in [REQUIREMENT.md](./REQUIREMENT.md)). Tables are created and updated
+by Hibernate (`spring.jpa.hibernate.ddl-auto=update`), so data is kept between restarts.
 
-1. Start a PostgreSQL server (e.g. `docker run -d --name protube-db -p 5432:5432 -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=protube postgres:16`).
-2. In `backend/src/main/resources/application.properties`, in the `prod` section, uncomment the PostgreSQL
-   `spring.datasource.url` line and remove the H2 one.
-3. Set `ENV_PROTUBE_DB` (e.g. `protube`), `ENV_PROTUBE_DB_USER` (e.g. `postgres`) and `ENV_PROTUBE_DB_PWD`.
+1. Start the database from the repo root: `docker compose up -d db` (PostgreSQL 16 on port 5432).
+2. Run the backend in `dev`. With no `ENV_PROTUBE_DB*` variables it uses the same defaults as `compose.yaml`
+   (`localhost`, database/user/password `protube`).
+3. Inside the dev container, the database runs on the host: the container sets `ENV_PROTUBE_DB_HOST=host.docker.internal`.
+
+The automated tests do not need PostgreSQL: they use the `test` profile with an in-memory H2 database
+(H2 is a test-only dependency, not part of the application).
 
 ## 6. Workflow reminders
 

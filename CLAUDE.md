@@ -27,8 +27,9 @@ The repo is a monorepo with two independently built apps plus a Python tool:
 * Run a single test class: `./mvnw test -Dtest=ClassName`; a single method: `./mvnw test -Dtest=ClassName#methodName`.
 * Coverage report (JaCoCo, used in CI): `./mvnw clean verify -Pcoverage`; HTML report at
   `backend/target/site/jacoco/`.
-* Two Spring profiles: `dev` (default, in-memory H2, `pro_tube.load_initial_data=true`) and `prod` (H2 by default,
-  PostgreSQL config commented out in `application.properties`, ready to enable).
+* Two Spring profiles, both on PostgreSQL (NFR-01): `dev` (default, `pro_tube.load_initial_data=true`, database from
+  `docker compose up db`) and `prod`. Tests use the `test` profile (`src/test/resources/application-test.properties`)
+  with an in-memory H2 database; H2 is a test-only dependency.
 
 ### Frontend (`frontend/`)
 
@@ -61,8 +62,8 @@ changes green against this pipeline before merging.
 ## Architecture notes
 
 * Backend follows a conventional Spring layering: `controller/` (REST endpoints under `/api/...`) →
-  `services/` (business logic) → (persistence layer to be added per NFR-01 in REQUIREMENT.md — H2/in-memory is
-  explicitly a placeholder, not the final datastore). `configuration/` holds Spring config (e.g. `MvcConfig`
+  `services/` (business logic) → `repository/` (Spring Data JPA) → `entity/` (JPA entities, stored in PostgreSQL per
+  NFR-01). See `docs/ARCHITECTURE.md`. `configuration/` holds Spring config (e.g. `MvcConfig`
   serves stored media under `/media/**`, matching `spring.mvc.static-path-pattern`).
 * The store directory (`ENV_PROTUBE_STORE_DIR`) is the single source of truth for video files/metadata shared
   between the video grabber tool and the backend — don't hardcode paths, read them through
