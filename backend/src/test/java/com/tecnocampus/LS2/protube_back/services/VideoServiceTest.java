@@ -1,5 +1,6 @@
 package com.tecnocampus.LS2.protube_back.services;
 
+import com.tecnocampus.LS2.protube_back.dto.VideoDetailResponse;
 import com.tecnocampus.LS2.protube_back.dto.VideoResponse;
 import com.tecnocampus.LS2.protube_back.entity.Video;
 import com.tecnocampus.LS2.protube_back.repository.VideoRepository;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -54,6 +56,36 @@ class VideoServiceTest {
         List<VideoResponse> videos = videoService.getVideos(2, 5);
 
         assertTrue(videos.isEmpty());
+    }
+
+    @Test
+    void shouldReturnAllTheDetailsOfOneVideo() {
+        Video video = new Video();
+        video.setTitle("Relaxing piano music");
+        video.setDescription("One minute of piano.");
+        video.setAuthorName("Music Channel");
+        video.setTags(List.of("piano", "relax"));
+        video.setVideoFileName("1.mp4");
+        video.setThumbnailFileName("1.webp");
+        video.setDuration(65.0);
+        when(videoRepository.findById(5L)).thenReturn(Optional.of(video));
+
+        VideoDetailResponse details = videoService.getVideoById(5L);
+
+        assertEquals("Relaxing piano music", details.getTitle());
+        assertEquals("One minute of piano.", details.getDescription());
+        assertEquals("Music Channel", details.getAuthor());
+        assertEquals(List.of("piano", "relax"), details.getTags());
+        assertEquals("/media/1.mp4", details.getVideoUrl());
+        assertEquals("/media/1.webp", details.getThumbnailUrl());
+        assertEquals(65.0, details.getDuration());
+    }
+
+    @Test
+    void shouldThrowVideoNotFoundWhenTheIdDoesNotExist() {
+        when(videoRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(VideoNotFoundException.class, () -> videoService.getVideoById(99L));
     }
 
     @Test

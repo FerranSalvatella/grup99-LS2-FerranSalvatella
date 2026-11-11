@@ -27,6 +27,8 @@ public class Video {
 
     private String category;
 
+    private String authorName;
+
     @ElementCollection
     private List<String> tags = new ArrayList<>();
 
@@ -73,6 +75,14 @@ public class Video {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public List<String> getTags() {

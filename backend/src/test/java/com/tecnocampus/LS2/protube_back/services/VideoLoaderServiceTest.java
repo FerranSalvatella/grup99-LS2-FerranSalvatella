@@ -65,6 +65,14 @@ class VideoLoaderServiceTest {
     }
 
     @Test
+    void shouldSaveTheChannelOfTheJsonFileAsTheAuthor() throws Exception {
+        videoLoaderService.loadVideosFromFolder(TEST_STORE_FOLDER);
+
+        Video video = findVideoByTitle("Learning Java in 30 seconds");
+        assertEquals("Code Channel", video.getAuthorName());
+    }
+
+    @Test
     void shouldNotLoadAnythingWhenTheDatabaseAlreadyHasVideos() throws Exception {
         videoLoaderService.loadVideosFromFolder(TEST_STORE_FOLDER);
 
