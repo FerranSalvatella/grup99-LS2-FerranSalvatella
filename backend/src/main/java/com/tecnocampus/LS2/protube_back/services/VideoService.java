@@ -1,5 +1,6 @@
 package com.tecnocampus.LS2.protube_back.services;
 
+import com.tecnocampus.LS2.protube_back.dto.VideoDetailResponse;
 import com.tecnocampus.LS2.protube_back.dto.VideoResponse;
 import com.tecnocampus.LS2.protube_back.entity.Video;
 import com.tecnocampus.LS2.protube_back.repository.VideoRepository;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VideoService {
@@ -38,6 +40,27 @@ public class VideoService {
         }
 
         return videos;
+    }
+
+    public VideoDetailResponse getVideoById(Long id) {
+        Optional<Video> foundVideo = videoRepository.findById(id);
+        if (foundVideo.isEmpty()) {
+            throw new VideoNotFoundException(id);
+        }
+
+        Video video = foundVideo.get();
+        String videoUrl = "/media/" + video.getVideoFileName();
+        String thumbnailUrl = "/media/" + video.getThumbnailFileName();
+
+        return new VideoDetailResponse(
+                video.getId(),
+                video.getTitle(),
+                video.getDescription(),
+                video.getAuthorName(),
+                video.getTags(),
+                videoUrl,
+                thumbnailUrl,
+                video.getDuration());
     }
 
     private void validatePage(int page, int size) {

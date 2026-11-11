@@ -87,6 +87,7 @@ public class VideoLoaderService {
         Video video = new Video();
         video.setTitle(getText(json, "title"));
         video.setDescription(getText(metadata, "description"));
+        video.setAuthorName(getText(json, "user"));
         video.setCategory(getCategory(metadata));
         video.setTags(getTags(metadata));
         video.setVideoFileName(fileId + ".mp4");

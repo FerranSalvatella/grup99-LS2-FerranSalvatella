@@ -1,9 +1,11 @@
 package com.tecnocampus.LS2.protube_back.controller;
 
+import com.tecnocampus.LS2.protube_back.dto.VideoDetailResponse;
 import com.tecnocampus.LS2.protube_back.dto.VideoResponse;
 import com.tecnocampus.LS2.protube_back.services.VideoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,10 @@ public class VideosController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
         return ResponseEntity.ok(videoService.getVideos(page, size));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<VideoDetailResponse> getVideoById(@PathVariable Long id) {
+        return ResponseEntity.ok(videoService.getVideoById(id));
     }
 }
