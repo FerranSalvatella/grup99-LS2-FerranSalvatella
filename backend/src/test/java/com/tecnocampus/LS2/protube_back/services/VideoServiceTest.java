@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -53,5 +54,20 @@ class VideoServiceTest {
         List<VideoResponse> videos = videoService.getVideos(2, 5);
 
         assertTrue(videos.isEmpty());
+    }
+
+    @Test
+    void shouldRejectANegativePage() {
+        assertThrows(InvalidPaginationException.class, () -> videoService.getVideos(-1, 12));
+    }
+
+    @Test
+    void shouldRejectAPageSizeOfZero() {
+        assertThrows(InvalidPaginationException.class, () -> videoService.getVideos(0, 0));
+    }
+
+    @Test
+    void shouldRejectAPageSizeBiggerThanTheMaximum() {
+        assertThrows(InvalidPaginationException.class, () -> videoService.getVideos(0, 101));
     }
 }
