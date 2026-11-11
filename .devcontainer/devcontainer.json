@@ -17,7 +17,9 @@
   },
   "containerEnv": {
     // Default video store inside the repo (gitignored). Fill it from the host with: docker compose run --rm videograbber
-    "ENV_PROTUBE_STORE_DIR": "${containerWorkspaceFolder}/store/"
+    "ENV_PROTUBE_STORE_DIR": "${containerWorkspaceFolder}/store/",
+    // PostgreSQL started on the host with: docker compose up -d db
+    "ENV_PROTUBE_DB_HOST": "host.docker.internal"
   },
   "mounts": [
     // Linux node_modules must not overwrite the host's (native binaries differ between OSes).

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -12,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
         "pro_tube.store.dir=c:",
         "pro_tube.load_initial_data=false"
 })
+@ActiveProfiles("test")
 class ProtubeBackApplicationTests {
 
     @Autowired
