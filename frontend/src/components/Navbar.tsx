@@ -7,6 +7,7 @@ function NavBar() {
       <Link to="/">Home</Link>
     </nav>
   );
-}
+} 
+
 
 export default NavBar;
