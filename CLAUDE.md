@@ -74,6 +74,12 @@ changes green against this pipeline before merging.
   list in `README.md`'s "MVP" section — check it before implementing a feature to see acceptance criteria and
   priority.
 
+## Coding style (project rule)
+
+Before writing, editing or reviewing any code, follow the `protube-coding-style` skill
+(`.claude/skills/protube-coding-style/SKILL.md`): clear, academic, beginner-readable code with good naming, no clever
+one-liners, no unusual libraries and no premature optimization.
+
 ## AI usage policy (project rule)
 
 Per `README.md`'s "Usage of AI" section and `REQUIREMENT.md` NFR-06/NFR-07: AI configuration must be team-reviewed
