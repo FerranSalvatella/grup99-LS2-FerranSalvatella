@@ -1,12 +1,14 @@
 package com.tecnocampus.LS2.protube_back.controller;
 
+import com.tecnocampus.LS2.protube_back.dto.VideoResponse;
 import com.tecnocampus.LS2.protube_back.services.VideoService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -16,17 +18,20 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class VideosControllerTest {
 
-    @InjectMocks
-    VideosController videosController;
-
-    @Autowired
     @Mock
-    VideoService videoService;
+    private VideoService videoService;
 
+    @InjectMocks
+    private VideosController videosController;
 
     @Test
-    void getVideos() {
-        when(videoService.getVideos()).thenReturn(List.of("video 1", "video 2"));
-        assertEquals(List.of("video 1", "video 2"), videosController.getVideos().getBody());
+    void shouldReturnTheVideosOfTheRequestedPage() {
+        VideoResponse video = new VideoResponse(1L, "Relaxing piano music", "/media/1.webp", 65.0);
+        when(videoService.getVideos(0, 12)).thenReturn(List.of(video));
+
+        ResponseEntity<List<VideoResponse>> response = videosController.getVideos(0, 12);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(List.of(video), response.getBody());
     }
 }

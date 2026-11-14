@@ -1,0 +1,32 @@
+{
+    "id": 0,
+    "width": 1280,
+    "height": 720,
+    "duration": 30.5,
+    "title": "Learning Java in 30 seconds",
+    "user": "Code Channel",
+    "timestamp": 1700000000,
+    "meta": {
+        "description": "A very short Java lesson.",
+        "categories": [
+            "Education"
+        ],
+        "tags": [
+            "java",
+            "programming"
+        ],
+        "view_count": 1500,
+        "like_count": 120,
+        "channel": "Code Channel",
+        "channel_follower_count": 5000,
+        "comments": [
+            {
+                "text": "Great video!",
+                "author": "student1",
+                "timestamp": 1700000100,
+                "like_count": 3,
+                "is_favorited": false
+            }
+        ]
+    }
+}

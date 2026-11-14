@@ -1,0 +1,1 @@
+This file is not a video description. The loader must ignore every file that does not end with .json.
