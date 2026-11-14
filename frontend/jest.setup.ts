@@ -1,4 +1,8 @@
 import '@testing-library/jest-dom';
+import { TextDecoder, TextEncoder } from 'util';
+
+// React Router 7 needs TextEncoder/TextDecoder, which the jsdom test environment does not provide
+Object.assign(global, { TextDecoder, TextEncoder });
 
 import fetchMock from 'jest-fetch-mock';
 
