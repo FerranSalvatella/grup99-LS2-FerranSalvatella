@@ -10,13 +10,11 @@ function App() {
   return (
     <div>
       <NavBar />
-      <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/videos/:id" element={<VideoPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-      </main>
     </div>
   );
 }
