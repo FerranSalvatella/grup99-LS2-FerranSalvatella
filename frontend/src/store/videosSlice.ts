@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Shape of the videos state. PG-21 adds the call to GET /api/videos that fills it.
+// Number of videos per page, the same default as GET /api/videos in the backend
+export const PAGE_SIZE = 12;
+
+// One video of the list, as GET /api/videos returns it
 export interface VideoSummary {
   id: number;
   title: string;
