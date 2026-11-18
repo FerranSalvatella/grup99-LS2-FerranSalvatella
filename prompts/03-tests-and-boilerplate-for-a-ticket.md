@@ -20,14 +20,20 @@ Follow CLAUDE.md, docs/ARCHITECTURE.md and the protube-coding-style skill.
 2. Write the AI part only. The tests are the specification of the human part: name every class and method
    the human must write, and test each acceptance criterion with one behaviour per test (Arrange / Act / Assert).
 3. Do NOT write the human part. Write a step-by-step guide for it instead: what each class and method must do,
-   which existing classes to use, the Spring / Java APIs needed with a link to their official docs, and how to
-   check it (which tests must pass). The guide must be understandable by any team member without more context.
+   which existing classes to use, the APIs needed with a link to their official docs, and how to check it
+   (which tests must pass). The guide must be understandable by any team member without more context.
+   Deliver the guide as a .txt file to the team member. It is a working document: it is NOT committed to Git.
 4. Before handing over, check privately that the tests and the guide are consistent (a throw-away implementation
    that is not committed and not shown).
-5. Commit the AI part alone, marked with AI-assisted: yes and this prompt file.
+5. Add one row for the ticket to docs/AI_USAGE.md: what the AI did (with this prompt), what the team member does,
+   and why the ticket was split that way. Only the justification, no instructions.
+6. Commit the AI part and the docs/AI_USAGE.md row alone, marked with AI-assisted: yes and this prompt file.
 ```
 
 ## Notes
 
-* The human part is committed separately by the team member, without the AI trailers.
+* The human part is committed separately by the team member. If the team member also uses AI for it, that commit is
+  marked too (AI-assisted: yes and its prompt).
 * First used in PG-20 (load the videoGrabber videos and list them).
+* Changed after PG-23: the guide is a .txt outside Git (it used to be committed as docs/ai-usage/PG-xx-human-part.md);
+  only the justification goes to Git, in docs/AI_USAGE.md. The full workflow is in the ticket-workflow skill.
