@@ -22,9 +22,28 @@ function renderAppAt(url: string) {
   );
 }
 
+const videoSeven = {
+  id: 7,
+  title: 'Learning Java in 30 seconds',
+  description: 'A very short Java lesson.',
+  author: 'Code Channel',
+  tags: ['java'],
+  videoUrl: '/media/0.mp4',
+  thumbnailUrl: '/media/0.webp',
+  duration: 30.5,
+};
+
+// The fake API answers the detail of video 7 and an empty list for the home page
+function answerLikeTheApi(url: string) {
+  if (url === 'other/videos/7') {
+    return Promise.resolve({ data: videoSeven });
+  }
+  return Promise.resolve({ data: [] });
+}
+
 describe('App routes', () => {
   beforeEach(() => {
-    mockedGet.mockResolvedValue({ data: [] });
+    mockedGet.mockImplementation(answerLikeTheApi);
   });
 
   it('shows the home page at /', async () => {
@@ -34,10 +53,10 @@ describe('App routes', () => {
     expect(await screen.findByText('There are no videos yet.')).toBeInTheDocument();
   });
 
-  it('shows the video page with the id of the url at /videos/7', () => {
+  it('shows the video page of the id of the url at /videos/7', async () => {
     renderAppAt('/videos/7');
 
-    expect(screen.getByRole('heading', { name: 'Video 7' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Learning Java in 30 seconds' })).toBeInTheDocument();
   });
 
   it('shows the not found page for an unknown url', () => {
@@ -46,9 +65,10 @@ describe('App routes', () => {
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
   });
 
-  it('shows the navigation bar on every page', () => {
+  it('shows the navigation bar on every page', async () => {
     renderAppAt('/videos/7');
 
     expect(screen.getByRole('navigation')).toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Learning Java in 30 seconds' });
   });
 });
