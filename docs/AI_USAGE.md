@@ -17,6 +17,7 @@ How tickets are split between AI and team member: `ticket-workflow` skill and
 | PG-16 | `docs/ARCHITECTURE.md` (`8e12d27`) | Product Owner decisions (login type, author field, Git flow…) and approval in PR #4 | AI wrote the document from the decisions taken by the Product Owner |
 | PG-17 | CI also runs on `develop` (`8d26c7b`) | Review in PR #3 | Three-line config change |
 | — | Sprint review skill (`14db639`) | Review in PR #2 | Built from the course template |
+| PG-12 | Whole ticket: husky + commitlint setup, `commitlint.config.js`, docs (no prompt file: direct request in the session) | Try a bad and a good commit on their own computer; review in the PR | Configuration only, no logic to split |
 
 ## Features
 
