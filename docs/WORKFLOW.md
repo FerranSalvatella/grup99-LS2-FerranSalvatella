@@ -54,7 +54,10 @@ How we move forward in the project, step by step.
 
    Refs: PG-20
    ```
-   Types: `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `chore`.
+   Types: `feat`, `fix`, `docs`, `test`, `refactor`, `style`, `chore`, `ci`, `build`, `perf`.
+   **Checked automatically:** a `commit-msg` hook (husky + commitlint, `commitlint.config.js`) stops the commit if
+   the first line is not `type(scope): summary` or if there is no ticket reference (`Refs: PG-<number>`).
+   Merge and revert commits are not checked. To turn the hook on, run `npm install` once in the repository root.
    If AI helped, add:
    ```
    AI-assisted: yes
@@ -101,7 +104,7 @@ How we move forward in the project, step by step.
 | Sprint | Ticket | Change                                         |
 |--------|--------|------------------------------------------------|
 | 0      | PG-17  | Current pipeline green and required on `main`  |
-| 0      | PG-12  | Commit messages checked (husky + commitlint)   |
+| 1      | PG-12  | Commit messages checked (husky + commitlint) ✅ |
 | 3      | PG-40  | Fail if coverage < 50% (backend + frontend)    |
 | 3      | PG-39  | First E2E test running in CI                   |
 | 4      | PG-48  | E2E tests for the main user flows              |
