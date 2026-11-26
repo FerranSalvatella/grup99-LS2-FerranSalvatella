@@ -1,5 +1,6 @@
 package com.tecnocampus.LS2.protube_back.controller;
 
+import com.tecnocampus.LS2.protube_back.configuration.SecurityConfig;
 import com.tecnocampus.LS2.protube_back.dto.VideoDetailResponse;
 import com.tecnocampus.LS2.protube_back.services.VideoNotFoundException;
 import com.tecnocampus.LS2.protube_back.services.VideoService;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -17,7 +19,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // Calls the real HTTP endpoint (without starting the server) to check the URL and the status codes
+// SecurityConfig is imported so the test uses the same security rules as the real application
 @WebMvcTest(controllers = VideosController.class, properties = "pro_tube.store.dir=/tmp/")
+@Import(SecurityConfig.class)
 class VideosControllerWebTest {
 
     @Autowired
