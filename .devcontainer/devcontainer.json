@@ -27,7 +27,8 @@
     // Cache Maven dependencies across container rebuilds.
     "source=protube-m2,target=/home/vscode/.m2,type=volume"
   ],
-  "postCreateCommand": "sudo chown -R vscode:vscode frontend/node_modules /home/vscode/.m2 && mkdir -p store && (cd frontend && npm ci) && (cd backend && sh ./mvnw -B -q dependency:go-offline)",
+  // npm install in the repository root turns on the commit-msg hook (husky + commitlint) for commits made in the container.
+  "postCreateCommand": "sudo chown -R vscode:vscode frontend/node_modules /home/vscode/.m2 && mkdir -p store && npm install && (cd frontend && npm ci) && (cd backend && sh ./mvnw -B -q dependency:go-offline)",
   "forwardPorts": [8080, 5173],
   "portsAttributes": {
     "8080": { "label": "Backend (Spring Boot)" },

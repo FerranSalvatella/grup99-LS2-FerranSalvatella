@@ -220,7 +220,9 @@ The automated tests do not need PostgreSQL: they use the `test` profile with an 
   review comments resolved before merging.
 * Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) and reference the task
   (`Refs: PG-<number>`). Run `npm install` **once in the repository root**: it turns on a `commit-msg` hook
-  (husky + commitlint) that stops commits with a wrong message. See `commitlint.config.js`.
+  (husky + commitlint) that stops commits with a wrong message. See `commitlint.config.js`. The dev container runs
+  it automatically. The hook runs where `git commit` runs: if you commit from Windows/macOS outside the container,
+  Node.js must be installed there too.
 * If AI generated part of a change, mark it in the commit message and reference the prompt from `prompts/` that was
   used (see [prompts/README.md](./prompts/README.md)).
 * Setting up the GitHub repository: [docs/GITHUB_SETUP.md](./docs/GITHUB_SETUP.md).
