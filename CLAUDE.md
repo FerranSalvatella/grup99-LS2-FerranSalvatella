@@ -88,3 +88,7 @@ and committed to the repo (this file), and every prompt used to generate code/ar
 in the `prompts/` folder at the repo root — reuse an existing approved prompt for a task type it already covers
 instead of writing an ad hoc one, and add new prompts there (with team approval) rather than only running them
 locally.
+
+Tickets are worked on following the `ticket-workflow` skill (`.claude/skills/ticket-workflow/SKILL.md`): the
+implementation guide for the team member is a `.txt` kept outside Git, and the AI justification of every ticket is
+recorded in `docs/AI_USAGE.md`.
