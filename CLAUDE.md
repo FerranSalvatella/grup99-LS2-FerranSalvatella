@@ -27,8 +27,9 @@ The repo is a monorepo with two independently built apps plus a Python tool:
 * Run a single test class: `./mvnw test -Dtest=ClassName`; a single method: `./mvnw test -Dtest=ClassName#methodName`.
 * Coverage report (JaCoCo, used in CI): `./mvnw clean verify -Pcoverage`; HTML report at
   `backend/target/site/jacoco/`.
-* Two Spring profiles: `dev` (default, in-memory H2, `pro_tube.load_initial_data=true`) and `prod` (H2 by default,
-  PostgreSQL config commented out in `application.properties`, ready to enable).
+* Two Spring profiles, both on PostgreSQL (NFR-01): `dev` (default, `pro_tube.load_initial_data=true`, database from
+  `docker compose up db`) and `prod`. Tests use the `test` profile (`src/test/resources/application-test.properties`)
+  with an in-memory H2 database; H2 is a test-only dependency.
 
 ### Frontend (`frontend/`)
 
@@ -54,15 +55,15 @@ The repo is a monorepo with two independently built apps plus a Python tool:
 
 ### CI
 
-`.github/workflows/main.yml` runs on PRs/pushes to `main`: frontend `npm ci` → `npm run build` → tests with
+`.github/workflows/main.yml` runs on PRs/pushes to `main` and `develop`: frontend `npm ci` → `npm run build` → tests with
 coverage → lint, then backend `./mvnw clean verify -Pcoverage`, uploading both coverage reports as artifacts. Keep
 changes green against this pipeline before merging.
 
 ## Architecture notes
 
 * Backend follows a conventional Spring layering: `controller/` (REST endpoints under `/api/...`) →
-  `services/` (business logic) → (persistence layer to be added per NFR-01 in REQUIREMENT.md — H2/in-memory is
-  explicitly a placeholder, not the final datastore). `configuration/` holds Spring config (e.g. `MvcConfig`
+  `services/` (business logic) → `repository/` (Spring Data JPA) → `entity/` (JPA entities, stored in PostgreSQL per
+  NFR-01). See `docs/ARCHITECTURE.md`. `configuration/` holds Spring config (e.g. `MvcConfig`
   serves stored media under `/media/**`, matching `spring.mvc.static-path-pattern`).
 * The store directory (`ENV_PROTUBE_STORE_DIR`) is the single source of truth for video files/metadata shared
   between the video grabber tool and the backend — don't hardcode paths, read them through
@@ -87,3 +88,7 @@ and committed to the repo (this file), and every prompt used to generate code/ar
 in the `prompts/` folder at the repo root — reuse an existing approved prompt for a task type it already covers
 instead of writing an ad hoc one, and add new prompts there (with team approval) rather than only running them
 locally.
+
+Tickets are worked on following the `ticket-workflow` skill (`.claude/skills/ticket-workflow/SKILL.md`): the
+implementation guide for the team member is a `.txt` kept outside Git, and the AI justification of every ticket is
+recorded in `docs/AI_USAGE.md`.

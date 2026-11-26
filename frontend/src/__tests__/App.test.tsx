@@ -1,0 +1,74 @@
+import { render, screen } from '@testing-library/react';
+import axios from 'axios';
+import { Provider } from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import App from '../App';
+import { setupStore } from '../store/store';
+
+// The home page loads videos: the API is faked so the tests do not need the backend
+jest.mock('axios', () => ({
+  __esModule: true,
+  default: { get: jest.fn() },
+}));
+const mockedGet = axios.get as jest.Mock;
+
+function renderAppAt(url: string) {
+  render(
+    <Provider store={setupStore()}>
+      <MemoryRouter initialEntries={[url]}>
+        <App />
+      </MemoryRouter>
+    </Provider>
+  );
+}
+
+const videoSeven = {
+  id: 7,
+  title: 'Learning Java in 30 seconds',
+  description: 'A very short Java lesson.',
+  author: 'Code Channel',
+  tags: ['java'],
+  videoUrl: '/media/0.mp4',
+  thumbnailUrl: '/media/0.webp',
+  duration: 30.5,
+};
+
+// The fake API answers the detail of video 7 and an empty list for the home page
+function answerLikeTheApi(url: string) {
+  if (url === 'other/videos/7') {
+    return Promise.resolve({ data: videoSeven });
+  }
+  return Promise.resolve({ data: [] });
+}
+
+describe('App routes', () => {
+  beforeEach(() => {
+    mockedGet.mockImplementation(answerLikeTheApi);
+  });
+
+  it('shows the home page at /', async () => {
+    renderAppAt('/');
+
+    expect(screen.getByRole('heading', { name: 'Latest videos' })).toBeInTheDocument();
+    expect(await screen.findByText('There are no videos yet.')).toBeInTheDocument();
+  });
+
+  it('shows the video page of the id of the url at /videos/7', async () => {
+    renderAppAt('/videos/7');
+
+    expect(await screen.findByRole('heading', { name: 'Learning Java in 30 seconds' })).toBeInTheDocument();
+  });
+
+  it('shows the not found page for an unknown url', () => {
+    renderAppAt('/this-page-does-not-exist');
+
+    expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
+  });
+
+  it('shows the navigation bar on every page', async () => {
+    renderAppAt('/videos/7');
+
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+    await screen.findByRole('heading', { name: 'Learning Java in 30 seconds' });
+  });
+});
