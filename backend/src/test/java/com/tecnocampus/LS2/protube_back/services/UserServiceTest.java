@@ -166,6 +166,21 @@ class UserServiceTest {
         verify(userRepository, never()).save(any(User.class));
     }
 
+    // ----- Read a user by email (used after the login) -----
+
+    @Test
+    void shouldReturnTheUserOfAnEmail() {
+        User anna = new User();
+        anna.setUsername("anna");
+        anna.setEmail("anna@example.com");
+        when(userRepository.findByEmail("anna@example.com")).thenReturn(Optional.of(anna));
+
+        UserResponse response = userService.getUserByEmail("anna@example.com");
+
+        assertEquals("anna", response.getUsername());
+        assertEquals("anna@example.com", response.getEmail());
+    }
+
     // ----- Helpers -----
 
     // The mocked repository gives back the same user it receives (like a real save)

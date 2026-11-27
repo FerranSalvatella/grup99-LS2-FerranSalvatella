@@ -97,3 +97,4 @@ Navigation with `react-router-dom`.
 | Password policy                     | At least 8 characters, with at least one letter and one number  | US-01 asks for a minimum policy (PG-26)                |
 | Validation of the register data     | By hand in `UserService` (no extra library)                     | No new dependency; every rule is visible in the code (PG-26) |
 | CSRF                                | Disabled in `SecurityConfig`                                    | React SPA with a session cookie; simplest setup. Known security trade-off, accepted for this project (PG-26) |
+| Login and logout                    | Own `AuthController`: `POST /api/auth/login` with JSON (email, password) answers 200 + the user or 401; `POST /api/auth/logout` closes the session; `GET /api/auth/me` (needs login) says who is logged in | Same JSON style as register; every step of the login is visible in the code (PG-27) |
