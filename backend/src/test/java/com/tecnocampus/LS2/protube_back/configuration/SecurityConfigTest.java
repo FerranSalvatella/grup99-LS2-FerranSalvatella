@@ -101,6 +101,16 @@ class SecurityConfigTest {
                 .andExpect(header().string("Access-Control-Allow-Origin", FRONTEND_ORIGIN));
     }
 
+    @Test
+    void frontendCanSendTheSessionCookie() throws Exception {
+        mockMvc.perform(options("/api/auth/login")
+                        .header("Origin", FRONTEND_ORIGIN)
+                        .header("Access-Control-Request-Method", "POST"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Access-Control-Allow-Origin", FRONTEND_ORIGIN))
+                .andExpect(header().string("Access-Control-Allow-Credentials", "true"));
+    }
+
     // ----- Passwords are saved with BCrypt -----
 
     @Test
