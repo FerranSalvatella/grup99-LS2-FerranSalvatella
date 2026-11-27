@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -8,9 +9,10 @@ import { setupStore } from '../store/store';
 // The home page loads videos: the API is faked so the tests do not need the backend
 jest.mock('axios', () => ({
   __esModule: true,
-  default: { get: jest.fn() },
+  default: { get: jest.fn(), post: jest.fn() },
 }));
 const mockedGet = axios.get as jest.Mock;
+const mockedPost = axios.post as jest.Mock;
 
 function renderAppAt(url: string) {
   render(
@@ -63,6 +65,30 @@ describe('App routes', () => {
     renderAppAt('/this-page-does-not-exist');
 
     expect(screen.getByRole('heading', { name: 'Page not found' })).toBeInTheDocument();
+  });
+
+  it('shows the login page at /login', () => {
+    renderAppAt('/login');
+
+    expect(screen.getByRole('heading', { name: 'Log in' })).toBeInTheDocument();
+  });
+
+  it('shows the register page at /register', () => {
+    renderAppAt('/register');
+
+    expect(screen.getByRole('heading', { name: 'Create an account' })).toBeInTheDocument();
+  });
+
+  it('after login goes to the home page and shows the name of the user in the menu', async () => {
+    mockedPost.mockResolvedValue({ data: { id: 1, username: 'anna', email: 'anna@example.com' } });
+    renderAppAt('/login');
+
+    await userEvent.type(screen.getByLabelText('Email'), 'anna@example.com');
+    await userEvent.type(screen.getByLabelText('Password'), 'secret123');
+    await userEvent.click(screen.getByRole('button', { name: 'Log in' }));
+
+    expect(await screen.findByRole('heading', { name: 'Latest videos' })).toBeInTheDocument();
+    expect(within(screen.getByRole('navigation')).getByText('anna')).toBeInTheDocument();
   });
 
   it('shows the navigation bar on every page', async () => {

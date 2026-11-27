@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './authSlice';
 import videosReducer from './videosSlice';
 
 // Creates a new store. The tests call it to get a fresh store in every test.
@@ -6,6 +7,7 @@ export function setupStore() {
   return configureStore({
     reducer: {
       videos: videosReducer,
+      auth: authReducer,
     },
   });
 }

@@ -33,8 +33,10 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        // allowCredentials: the browser can send the session cookie from the frontend (another port) to the API
         registry.addMapping("/api/**")
-                .allowedOriginPatterns("*");
+                .allowedOriginPatterns("*")
+                .allowCredentials(true);
         registry.addMapping("/auth/**")
                 .allowedOriginPatterns("*");
     }
