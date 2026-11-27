@@ -45,13 +45,7 @@ function RegisterPage() {
       <h1>Create an account</h1>
       <form onSubmit={handleSubmit} noValidate>
         <FormField label="Email" type="email" value={email} onChange={setEmail} error={errors.email} />
-        <FormField
-          label="Password"
-          type="password"
-          value={password}
-          onChange={setPassword}
-          error={errors.password}
-        />
+        <FormField label="Password" type="password" value={password} onChange={setPassword} error={errors.password} />
         <button type="submit" className="btn btn-primary">
           Create account
         </button>
