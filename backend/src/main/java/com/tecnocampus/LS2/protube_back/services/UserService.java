@@ -4,10 +4,12 @@ import com.tecnocampus.LS2.protube_back.dto.RegisterRequest;
 import com.tecnocampus.LS2.protube_back.dto.UserResponse;
 import com.tecnocampus.LS2.protube_back.entity.User;
 import com.tecnocampus.LS2.protube_back.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -45,6 +47,16 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
         return new UserResponse(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail());
+    }
+
+    public UserResponse getUserByEmail(String email) {
+        Optional<User> foundUser = userRepository.findByEmail(email);
+        if (foundUser.isEmpty()) {
+            throw new UsernameNotFoundException("There is no user with this email");
+        }
+
+        User user = foundUser.get();
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
     private boolean isValidEmail(String email) {
