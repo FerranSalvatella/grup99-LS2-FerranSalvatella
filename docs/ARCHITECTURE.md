@@ -93,3 +93,7 @@ Navigation with `react-router-dom`.
 | Thumbnail on upload                 | Optional; if missing, a default image is shown                  | Generating it with ffmpeg on the server adds complexity|
 | Branches                            | Git flow: task branches and PRs to `develop`, releases to `main`| Course Git flow slides                                 |
 | Database in development             | PostgreSQL from `compose.yaml` (`docker compose up db`)         | Same database as production (NFR-01)                   |
+| Register: username                  | Made from the email (part before the `@`); if it is taken, a number is added (`anna2`, `anna3`...) | The form only asks for email and password (PG-26) |
+| Password policy                     | At least 8 characters, with at least one letter and one number  | US-01 asks for a minimum policy (PG-26)                |
+| Validation of the register data     | By hand in `UserService` (no extra library)                     | No new dependency; every rule is visible in the code (PG-26) |
+| CSRF                                | Disabled in `SecurityConfig`                                    | React SPA with a session cookie; simplest setup. Known security trade-off, accepted for this project (PG-26) |

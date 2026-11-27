@@ -22,6 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults());
+        http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(rules -> {
             rules.requestMatchers(HttpMethod.GET, "/api/videos", "/api/videos/**").permitAll();
