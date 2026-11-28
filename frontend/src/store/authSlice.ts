@@ -7,11 +7,14 @@ import { LoadingStatus } from './videosSlice';
 export interface AuthState {
   user: LoggedUser | null;
   loginStatus: LoadingStatus;
+  // true when we already know if there is a session or not
+  sessionChecked: boolean;
 }
 
 const initialState: AuthState = {
   user: null,
   loginStatus: 'idle',
+  sessionChecked: false,
 };
 
 // The session cookie is saved and sent by the browser only if the request uses withCredentials
@@ -25,6 +28,13 @@ export const logIn = createAsyncThunk<LoggedUser, Credentials>('auth/logIn', asy
 
 export const logOut = createAsyncThunk<void>('auth/logOut', async () => {
   await axios.post(getEnv().API_BASE_URL + '/auth/logout', null, WITH_COOKIES);
+});
+
+// PG-29: ask the backend who is logged in (needed after reloading the page, when the store is empty).
+// A 401 means "no session": the slice handles it, the user does not see an error.
+export const fetchCurrentUser = createAsyncThunk<LoggedUser>('auth/fetchCurrentUser', async () => {
+  const response = await axios.get<LoggedUser>(getEnv().API_BASE_URL + '/auth/me', WITH_COOKIES);
+  return response.data;
 });
 
 // If the register fails, the thunk gives the HTTP status (for example 409: email already used)
@@ -61,6 +71,14 @@ const authSlice = createSlice({
     builder.addCase(logIn.rejected, (state) => {
       state.loginStatus = 'error';
       state.user = null;
+    });
+    builder.addCase(fetchCurrentUser.fulfilled, (state, action) => {
+      state.user = action.payload;
+      state.sessionChecked = true;
+    });
+    builder.addCase(fetchCurrentUser.rejected, (state) => {
+      state.user = null;
+      state.sessionChecked = true;
     });
     builder.addCase(logOut.fulfilled, (state) => {
       state.loginStatus = 'idle';
