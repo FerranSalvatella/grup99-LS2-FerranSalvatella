@@ -35,8 +35,12 @@ const videoSeven = {
   duration: 30.5,
 };
 
-// The fake API answers the detail of video 7 and an empty list for the home page
+// The fake API answers the detail of video 7, an empty list for the home page,
+// and 401 for "who is logged in" (nobody has a session)
 function answerLikeTheApi(url: string) {
+  if (url === 'other/auth/me') {
+    return Promise.reject({ response: { status: 401 } });
+  }
   if (url === 'other/videos/7') {
     return Promise.resolve({ data: videoSeven });
   }
@@ -96,5 +100,27 @@ describe('App routes', () => {
 
     expect(screen.getByRole('navigation')).toBeInTheDocument();
     await screen.findByRole('heading', { name: 'Learning Java in 30 seconds' });
+  });
+
+  // ----- PG-29: the session is restored when the app starts (for example after F5) -----
+
+  it('asks the backend who is logged in when the app starts', async () => {
+    renderAppAt('/');
+
+    expect(mockedGet).toHaveBeenCalledWith('other/auth/me', { withCredentials: true });
+    await screen.findByText('There are no videos yet.');
+  });
+
+  it('shows the name of the user in the menu when the session is still open', async () => {
+    mockedGet.mockImplementation((url: string) => {
+      if (url === 'other/auth/me') {
+        return Promise.resolve({ data: { id: 1, username: 'anna', email: 'anna@example.com' } });
+      }
+      return Promise.resolve({ data: [] });
+    });
+
+    renderAppAt('/');
+
+    expect(await within(screen.getByRole('navigation')).findByText('anna')).toBeInTheDocument();
   });
 });

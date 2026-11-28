@@ -1,12 +1,13 @@
 import axios from 'axios';
 import { setupStore } from '../store';
-import { logIn, logOut, registerUser } from '../authSlice';
+import { fetchCurrentUser, logIn, logOut, registerUser } from '../authSlice';
 
 // Fake axios: the tests decide what the API answers
 jest.mock('axios', () => ({
   __esModule: true,
   default: { get: jest.fn(), post: jest.fn() },
 }));
+const mockedGet = axios.get as jest.Mock;
 const mockedPost = axios.post as jest.Mock;
 
 const anna = { id: 1, username: 'anna', email: 'anna@example.com' };
@@ -17,6 +18,7 @@ const WITH_COOKIES = { withCredentials: true };
 
 describe('authSlice', () => {
   beforeEach(() => {
+    mockedGet.mockReset();
     mockedPost.mockReset();
   });
 
@@ -110,5 +112,42 @@ describe('authSlice', () => {
     await store.dispatch(registerUser(annaCredentials));
 
     expect(store.getState().auth.user).toBeNull();
+  });
+
+  // ----- fetchCurrentUser (PG-29): who is logged in when the app starts -----
+
+  it('starts with the session not checked yet', () => {
+    const store = setupStore();
+
+    expect(store.getState().auth.sessionChecked).toBe(false);
+  });
+
+  it('asks the API who is logged in, with cookies', async () => {
+    mockedGet.mockResolvedValue({ data: anna });
+    const store = setupStore();
+
+    await store.dispatch(fetchCurrentUser());
+
+    expect(mockedGet).toHaveBeenCalledWith('other/auth/me', WITH_COOKIES);
+  });
+
+  it('saves the user and marks the session as checked when there is a session', async () => {
+    mockedGet.mockResolvedValue({ data: anna });
+    const store = setupStore();
+
+    await store.dispatch(fetchCurrentUser());
+
+    expect(store.getState().auth.user).toEqual(anna);
+    expect(store.getState().auth.sessionChecked).toBe(true);
+  });
+
+  it('keeps nobody logged in and marks the session as checked when there is no session', async () => {
+    mockedGet.mockRejectedValue({ response: { status: 401 } });
+    const store = setupStore();
+
+    await store.dispatch(fetchCurrentUser());
+
+    expect(store.getState().auth.user).toBeNull();
+    expect(store.getState().auth.sessionChecked).toBe(true);
   });
 });

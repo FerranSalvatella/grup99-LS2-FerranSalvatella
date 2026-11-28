@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import FormField from '../components/FormField';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logIn } from '../store/authSlice';
@@ -7,6 +7,7 @@ import { logIn } from '../store/authSlice';
 function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const ubicacion = useLocation();
   const loginStatus = useAppSelector((state) => state.auth.loginStatus);
 
   const [email, setEmail] = useState('');
@@ -17,7 +18,9 @@ function LoginPage() {
 
     const result = await dispatch(logIn({ email, password }));
     if (logIn.fulfilled.match(result)) {
-      navigate('/');
+      // RequireAuth sends the page the user wanted in state.from
+      const paginaDestino = (ubicacion.state as { from?: string } | null)?.from ?? '/';
+      navigate(paginaDestino, { replace: true });
     }
   }
 
