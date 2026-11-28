@@ -88,4 +88,24 @@ describe('LoginPage', () => {
 
     expect(screen.getByRole('link', { name: 'Create an account' })).toHaveAttribute('href', '/register');
   });
+
+  it('goes back to the page that was wanted before the login', async () => {
+    mockedPost.mockResolvedValue({ data: anna });
+    // RequireAuth sends to /login with the wanted page in the "from" state
+    render(
+      <Provider store={setupStore()}>
+        <MemoryRouter initialEntries={[{ pathname: '/login', state: { from: '/upload' } }]}>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/upload" element={<p>Fake upload page</p>} />
+            <Route path="/" element={<p>Fake home page</p>} />
+          </Routes>
+        </MemoryRouter>
+      </Provider>
+    );
+
+    await fillAndSend('anna@example.com', 'secret123');
+
+    expect(await screen.findByText('Fake upload page')).toBeInTheDocument();
+  });
 });
